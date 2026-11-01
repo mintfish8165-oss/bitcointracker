@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>실시간 비트코인 시세</title>
+  <meta name="description" content="업비트 Open API로 보는 실시간 비트코인 시세" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>실시간 코인 시세</h1>
+    <span id="status" class="status connecting">연결 중…</span>
+  </header>
+
+  <nav id="tabs" class="tabs"></nav>
+
+  <main>
+    <section class="hero card">
+      <div class="hero-name">
+        <span id="coinName">비트코인</span>
+        <span id="coinCode" class="muted">KRW-BTC</span>
+      </div>
+      <div id="price" class="price">-</div>
+      <div id="change" class="change">-</div>
+
+      <dl class="stats">
+        <div><dt>고가</dt><dd id="high">-</dd></div>
+        <div><dt>저가</dt><dd id="low">-</dd></div>
+        <div><dt>전일 종가</dt><dd id="prev">-</dd></div>
+        <div><dt>24시간 거래대금</dt><dd id="volume">-</dd></div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>최근 2시간 (1분봉)</h2>
+      <canvas id="chart" height="260"></canvas>
+    </section>
+
+    <section class="card">
+      <h2>실시간 체결</h2>
+      <table class="trades">
+        <thead><tr><th>시간</th><th>가격(원)</th><th>수량</th></tr></thead>
+        <tbody id="trades"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    데이터 출처: <a href="https://docs.upbit.com/kr" target="_blank" rel="noopener">업비트 Open API</a> · 투자 판단의 근거로 사용하지 마십시오.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
