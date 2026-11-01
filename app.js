@@ -23,7 +23,26 @@ const UNITS = [
   { key: "60",  label: "1시간", ms: 60 * 60e3 },
   { key: "240", label: "4시간", ms: 240 * 60e3 },
   { key: "D",   label: "일",    ms: 24 * 60 * 60e3 },
+  { key: "W",   label: "주" },
+  { key: "M",   label: "월" },
 ];
+
+const API_PATH = { D: "days", W: "weeks", M: "months" };
+
+// 체결 시각(ms)이 속한 캔들의 시작 시각(ms, UTC 기준)
+// 업비트 일·주·월봉은 UTC 0시(한국 시간 오전 9시)에 시작합니다.
+function bucketStart(ts) {
+  if (unit.key === "W") {
+    const d = new Date(ts);
+    const day = (d.getUTCDay() + 6) % 7; // 월요일 = 0
+    return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
+  }
+  if (unit.key === "M") {
+    const d = new Date(ts);
+    return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+  }
+  return Math.floor(ts / unit.ms) * unit.ms;
+}
 
 const WS_URL = "wss://api.upbit.com/websocket/v1";
 const KST = 9 * 3600; // 차트를 한국 시간으로 표시하기 위한 보정(초)
@@ -260,7 +279,7 @@ let loadSeq = 0;
 async function loadCandles() {
   const seq = ++loadSeq;
   const code = selected;
-  const path = unit.key === "D" ? "days" : `minutes/${unit.key}`;
+  const path = API_PATH[unit.key] || `minutes/${unit.key}`;
   const urls = [
     `/api/candles?market=${code}&unit=${unit.key}&count=200`,
     `https://api.upbit.com/v1/candles/${path}?market=${code}&count=200`,
@@ -292,7 +311,7 @@ async function loadCandles() {
 // 실시간 체결을 마지막 캔들에 반영
 function applyTrade(price, volume, ts) {
   if (!lastCandle) return;
-  const time = Math.floor(ts / unit.ms) * unit.ms / 1000 + KST;
+  const time = bucketStart(ts) / 1000 + KST;
   if (time > lastCandle.time) {
     lastCandle = { time, open: price, high: price, low: price, close: price, volume };
   } else if (time === lastCandle.time) {
