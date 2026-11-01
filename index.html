@@ -3,53 +3,102 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>실시간 비트코인 시세</title>
-  <meta name="description" content="업비트 Open API로 보는 실시간 비트코인 시세" />
+  <title>Bitcoin Tracker</title>
+  <meta name="description" content="업비트 Open API로 보는 실시간 코인 시세 · 캔들 차트 · 호가 · 체결" />
+  <meta name="theme-color" content="#0a0e17" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
   <header class="top">
-    <h1>실시간 코인 시세</h1>
-    <span id="status" class="status connecting">연결 중…</span>
+    <div class="brand">
+      <span class="logo">₿</span>
+      <div>
+        <h1>BITCOIN TRACKER</h1>
+        <p>업비트 실시간 시세</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <span id="clock" class="clock">--:--:--</span>
+      <span id="status" class="status connecting">연결 중</span>
+    </div>
   </header>
 
-  <nav id="tabs" class="tabs"></nav>
+  <div class="layout">
+    <!-- 코인 목록 -->
+    <aside class="card markets">
+      <h2>마켓</h2>
+      <ul id="markets"></ul>
+    </aside>
 
-  <main>
-    <section class="hero card">
-      <div class="hero-name">
-        <span id="coinName">비트코인</span>
-        <span id="coinCode" class="muted">KRW-BTC</span>
+    <!-- 가운데: 시세 + 차트 -->
+    <section class="center">
+      <div class="card hero">
+        <div class="hero-head">
+          <span id="coinBadge" class="badge">BTC</span>
+          <div>
+            <div id="coinName" class="coin-name">비트코인</div>
+            <div id="coinCode" class="coin-code">KRW-BTC</div>
+          </div>
+        </div>
+
+        <div class="hero-price">
+          <div id="price" class="price">-</div>
+          <div id="change" class="change">-</div>
+        </div>
+
+        <dl class="stats">
+          <div><dt>고가</dt><dd id="high" class="rise">-</dd></div>
+          <div><dt>저가</dt><dd id="low" class="fall">-</dd></div>
+          <div><dt>전일 종가</dt><dd id="prev">-</dd></div>
+          <div><dt>거래대금(24H)</dt><dd id="volume">-</dd></div>
+          <div><dt>52주 최고</dt><dd id="high52">-</dd></div>
+          <div><dt>52주 최저</dt><dd id="low52">-</dd></div>
+        </dl>
       </div>
-      <div id="price" class="price">-</div>
-      <div id="change" class="change">-</div>
 
-      <dl class="stats">
-        <div><dt>고가</dt><dd id="high">-</dd></div>
-        <div><dt>저가</dt><dd id="low">-</dd></div>
-        <div><dt>전일 종가</dt><dd id="prev">-</dd></div>
-        <div><dt>24시간 거래대금</dt><dd id="volume">-</dd></div>
-      </dl>
+      <div class="card chart-card">
+        <div class="chart-head">
+          <h2>차트</h2>
+          <div id="units" class="units"></div>
+        </div>
+        <div id="chart" class="chart"></div>
+      </div>
     </section>
 
-    <section class="card">
-      <h2>최근 2시간 (1분봉)</h2>
-      <canvas id="chart" height="260"></canvas>
-    </section>
+    <!-- 오른쪽: 호가 + 체결 -->
+    <section class="side">
+      <div class="card">
+        <h2>호가</h2>
+        <div class="ob-head"><span>잔량</span><span>가격</span><span>잔량</span></div>
+        <div id="orderbook" class="orderbook"></div>
+        <div class="pressure">
+          <div class="pressure-bar"><span id="bidBar"></span></div>
+          <div class="pressure-label">
+            <span class="rise">매수 <b id="bidPct">-</b></span>
+            <span class="fall">매도 <b id="askPct">-</b></span>
+          </div>
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>실시간 체결</h2>
-      <table class="trades">
-        <thead><tr><th>시간</th><th>가격(원)</th><th>수량</th></tr></thead>
-        <tbody id="trades"></tbody>
-      </table>
+      <div class="card">
+        <h2>실시간 체결</h2>
+        <table class="trades">
+          <thead><tr><th>시간</th><th>가격</th><th>수량</th></tr></thead>
+          <tbody id="trades"></tbody>
+        </table>
+      </div>
     </section>
-  </main>
+  </div>
 
   <footer>
-    데이터 출처: <a href="https://docs.upbit.com/kr" target="_blank" rel="noopener">업비트 Open API</a> · 투자 판단의 근거로 사용하지 마십시오.
+    데이터: <a href="https://docs.upbit.com/kr" target="_blank" rel="noopener">업비트 Open API</a> · 투자 판단의 근거로 사용하지 마십시오.
   </footer>
 
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
